@@ -17,11 +17,11 @@ const ProductCard = ({ id, name, price, discountPrice, image, stock = 0 }: Produ
 
   return (
     <Link to={`/product/${id}`} className="product-card group">
-      <div className="aspect-[3/4] relative overflow-hidden bg-muted">
+      <div className="aspect-[4/5] relative overflow-hidden bg-muted">
         <img
           src={image}
           alt={name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110"
         />
         
         {hasDiscount && (

@@ -86,9 +86,9 @@ const CategoriesPage = () => {
   }
 
   return (
-    <div className="pb-20">
+    <div className="pb-20 overflow-x-hidden">
       {/* Category Tabs */}
-      <div className="sticky top-16 z-40 bg-background border-b-2 border-border">
+      <div className="sticky top-16 z-40 bg-background border-b-2 border-border overflow-x-hidden">
         <div className="container mx-auto px-4 py-3 overflow-x-auto">
           <div className="flex gap-2 min-w-max">
             <button

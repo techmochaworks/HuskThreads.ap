@@ -99,9 +99,9 @@ const HomePage = () => {
   }
 
   return (
-    <div className="pb-16">
+    <div className="pb-16 overflow-x-hidden">
       {/* Hero Carousel */}
-      <section className="relative h-[40vh] md:h-[50vh] bg-muted overflow-hidden">
+      <section className="relative h-[50vh] md:h-[60vh] bg-muted overflow-hidden">
         {categories.length > 0 && (
           <>
             <div
@@ -113,11 +113,11 @@ const HomePage = () => {
                   <img
                     src={category.imageUrl}
                     alt={category.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-center"
                   />
-                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                    <div className="text-center text-white">
-                      <h2 className="text-4xl md:text-6xl font-bold mb-4">{category.name}</h2>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent flex items-end md:items-center justify-center pb-12 md:pb-0">
+                    <div className="text-center text-white px-4">
+                      <h2 className="text-3xl md:text-6xl font-bold mb-4">{category.name}</h2>
                       <button className="bg-white text-black px-8 py-3 font-semibold hover:bg-white/90 transition-colors">
                         Shop Now
                       </button>

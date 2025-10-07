@@ -15,14 +15,14 @@
     --primary: 0 0% 0%;
     --primary-foreground: 0 0% 100%;
     
-    --secondary: 0 0% 96%;
+    --secondary: 220 13% 95%;
     --secondary-foreground: 0 0% 0%;
     
-    /* Subtle Grays */
-    --muted: 0 0% 96%;
+    /* Subtle Grays with Light Blue Tint */
+    --muted: 220 13% 95%;
     --muted-foreground: 0 0% 45%;
     
-    --accent: 0 0% 96%;
+    --accent: 210 40% 96%;
     --accent-foreground: 0 0% 0%;
     
     /* UI Elements */

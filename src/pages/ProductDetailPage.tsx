@@ -140,11 +140,11 @@ const ProductDetailPage = () => {
         <div className="grid md:grid-cols-2 gap-8">
           {/* Images */}
           <div>
-            <div className="aspect-[3/4] bg-muted mb-4">
+            <div className="aspect-[4/5] bg-muted mb-4">
               <img
                 src={product.images[selectedImage]}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain object-center"
               />
             </div>
             <div className="flex gap-2 overflow-x-auto">
@@ -156,7 +156,7 @@ const ProductDetailPage = () => {
                     selectedImage === index ? 'border-foreground' : 'border-border'
                   }`}
                 >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  <img src={img} alt="" className="w-full h-full object-cover object-center" />
                 </button>
               ))}
             </div>
