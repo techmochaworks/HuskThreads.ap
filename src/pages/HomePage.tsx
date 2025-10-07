@@ -101,7 +101,7 @@ const HomePage = () => {
   return (
     <div className="pb-16 overflow-x-hidden">
       {/* Hero Carousel */}
-      <section className="relative h-[50vh] md:h-[60vh] bg-muted overflow-hidden">
+      <section className="relative  md:h-[60vh] bg-muted overflow-hidden">
         {categories.length > 0 && (
           <>
             <div
@@ -109,26 +109,26 @@ const HomePage = () => {
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}
             >
               {categories.map((category) => (
-                <div key={category.id} className="min-w-full h-full relative">
+                <div key={category.id} className="min-w-full  relative">
                   <img
                     src={category.imageUrl}
                     alt={category.name}
-                    className="w-full h-full object-cover object-center"
+                    className="w-full object-fill object-center"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent flex items-end md:items-center justify-center pb-12 md:pb-0">
+                  {/* <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent flex items-end md:items-center justify-center pb-12 md:pb-0">
                     <div className="text-center text-white px-4">
                       <h2 className="text-3xl md:text-6xl font-bold mb-4">{category.name}</h2>
                       <button className="bg-white text-black px-8 py-3 font-semibold hover:bg-white/90 transition-colors">
                         Shop Now
                       </button>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               ))}
             </div>
 
             {/* Navigation Arrows */}
-            <button
+            {/* <button
               onClick={prevSlide}
               className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-2 hover:bg-white/30 transition-colors"
             >
@@ -139,12 +139,13 @@ const HomePage = () => {
               className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-2 hover:bg-white/30 transition-colors"
             >
               <ChevronRight className="w-6 h-6" />
-            </button>
+            </button> */}
 
             {/* Dots */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
               {categories.map((_, index) => (
                 <button
+                title='Go to slide'
                   key={index}
                   onClick={() => setCurrentSlide(index)}
                   className={`w-2 h-2 transition-all ${
