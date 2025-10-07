@@ -68,6 +68,9 @@
   html {
     scroll-behavior: smooth;
   }
+  html, body {
+  overflow-x: visible !important;
+}
 }
 
 @layer components {

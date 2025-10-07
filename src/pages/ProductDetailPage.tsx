@@ -127,7 +127,7 @@ const ProductDetailPage = () => {
   const discountPercent = hasDiscount ? Math.round(((product.price - product.discountPrice!) / product.price) * 100) : 0;
 
   return (
-    <div className="pb-24 md:pb-20">
+    <div className="min-h-screen pb-24 md:pb-20">
       {/* Back Button - Sticky on mobile */}
       <div className="sticky top-0 z-10 bg-background border-b border-border">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
@@ -319,7 +319,9 @@ const ProductDetailPage = () => {
       </div>
 
       {/* Fixed Bottom Action Bar - Mobile Only */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border p-3 sm:p-4 z-20 shadow-lg">
+     {/* <div 
+  className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border p-3 sm:p-4 z-20 shadow-lg"
+> */}
         <div className="flex gap-2 sm:gap-3">
           <button
             onClick={handleAddToCart}
@@ -338,7 +340,7 @@ const ProductDetailPage = () => {
           </button>
         </div>
       </div>
-    </div>
+    // </div>
   );
 };
 
