@@ -55,7 +55,6 @@ const HomePage = () => {
     fetchData();
   }, []);
 
-  // Auto-advance carousel
   useEffect(() => {
     if (categories.length === 0) return;
     
@@ -102,7 +101,6 @@ const HomePage = () => {
     <div className="pb-16 overflow-x-hidden">
     
 
-      {/* Hero Carousel */}
       <section className="relative  md:h-[60vh] bg-muted overflow-hidden">
         {categories.length > 0 && (
           <>
@@ -117,19 +115,11 @@ const HomePage = () => {
                     alt={category.name}
                     className="w-full object-fill object-center"
                   />
-                  {/* <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent flex items-end md:items-center justify-center pb-12 md:pb-0">
-                    <div className="text-center text-white px-4">
-                      <h2 className="text-3xl md:text-6xl font-bold mb-4">{category.name}</h2>
-                      <button className="bg-white text-black px-8 py-3 font-semibold hover:bg-white/90 transition-colors">
-                        Shop Now
-                      </button>
-                    </div>
-                  </div> */}
+                  
                 </div>
               ))}
             </div>
 
-            {/* Navigation Arrows */}
             <button
               aria-label="Previous Slide"
               onClick={prevSlide}
