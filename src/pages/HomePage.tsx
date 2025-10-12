@@ -100,6 +100,8 @@ const HomePage = () => {
 
   return (
     <div className="pb-16 overflow-x-hidden">
+    
+
       {/* Hero Carousel */}
       <section className="relative  md:h-[60vh] bg-muted overflow-hidden">
         {categories.length > 0 && (
@@ -128,32 +130,22 @@ const HomePage = () => {
             </div>
 
             {/* Navigation Arrows */}
-            {/* <button
+            <button
+              aria-label="Previous Slide"
               onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-2 hover:bg-white/30 transition-colors"
+              className="absolute left-4 top-1/2 -translate-y-1/2   text-white p-2 hover:bg-white/30 transition-colors"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
             <button
+              aria-label="Next Slide"
               onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-2 hover:bg-white/30 transition-colors"
+              className="absolute right-4 top-1/2 -translate-y-1/2   text-white p-2 hover:bg-white/30 transition-colors"
             >
               <ChevronRight className="w-6 h-6" />
-            </button> */}
+            </button>
 
-            {/* Dots */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-              {categories.map((_, index) => (
-                <button
-                title='Go to slide'
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`w-2 h-2 transition-all ${
-                    index === currentSlide ? 'bg-white w-8' : 'bg-white/50'
-                  }`}
-                />
-              ))}
-            </div>
+            
           </>
         )}
       </section>
