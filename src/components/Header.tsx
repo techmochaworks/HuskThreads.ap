@@ -10,9 +10,11 @@ const Header = () => {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center">
-          <h1 className="text-2xl font-bold tracking-tight">
-            HUSK<span className="font-light">THREADS</span>
-          </h1>
+          <img 
+            src="/logo.png" 
+            alt="HuskThreads" 
+            className="h-10 w-auto object-contain"
+          />
         </Link>
 
         {/* Search Bar - Hidden on mobile */}
