@@ -141,7 +141,7 @@ const SearchPage = () => {
   }
 
   return (
-    <div className="pb-20 sm:pb-24 md:pb-20 overflow-x-hidden">
+    <div className="pb-0 sm:pb-24 md:pb-8 overflow-x-hidden">
       {/* Search Bar - Sticky */}
       <div className="sticky top-0 z-40 bg-background border-b-2 border-border shadow-sm">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">

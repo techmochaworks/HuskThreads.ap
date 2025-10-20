@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useData } from '@/contexts/datacontext'; // Import the context
+import { useData } from '@/contexts/datacontext';
 import { useCart } from '@/contexts/CartContext';
 import { toast } from 'sonner';
 import { ArrowLeft, Minus, Plus, ShoppingCart } from 'lucide-react';
@@ -11,7 +11,6 @@ const ProductDetailPage = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   
-  // Use the global data context - NO MORE API CALLS!
   const { getProductById, getProductsBySubcategory, loading } = useData();
   
   const [product, setProduct] = useState(getProductById(id || ''));
@@ -31,7 +30,6 @@ const ProductDetailPage = () => {
       setSelectedColor(foundProduct.colors[0] || '');
       setSelectedSize(foundProduct.sizes[0] || '');
 
-      // Get related products from the same subcategory
       if (foundProduct.subcategoryId) {
         const related = getProductsBySubcategory(foundProduct.subcategoryId)
           .filter(p => p.id !== id)
@@ -93,7 +91,7 @@ const ProductDetailPage = () => {
   const discountPercent = hasDiscount ? Math.round(((product.price - product.discountPrice!) / product.price) * 100) : 0;
 
   return (
-    <div className="min-h-screen pb-24 md:pb-20">
+    <div className="pb-0 sm:pb-24 md:pb-8 ">
       <div className="sticky top-0 z-10 bg-background border-b border-border">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <button 
@@ -119,7 +117,7 @@ const ProductDetailPage = () => {
             <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
               {product.images.map((img, index) => (
                 <button
-                title='d'
+                  title='d'
                   key={index}
                   onClick={() => setSelectedImage(index)}
                   className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 border-2 rounded-md overflow-hidden touch-manipulation transition-all ${
@@ -223,7 +221,7 @@ const ProductDetailPage = () => {
               </div>
             </div>
 
-            <div className="hidden md:flex flex-col gap-3">
+            <div className=" md:flex flex-col gap-3">
               <button
                 onClick={handleAddToCart}
                 disabled={product.stock === 0}
@@ -275,25 +273,7 @@ const ProductDetailPage = () => {
         )}
       </div>
 
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border p-3 sm:p-4 z-20 shadow-lg">
-        <div className="flex gap-2 sm:gap-3">
-          <button
-            onClick={handleAddToCart}
-            disabled={product.stock === 0}
-            className="btn-primary flex-1 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed py-3 sm:py-3.5 text-sm sm:text-base touch-manipulation active:scale-95 transition-transform"
-          >
-            <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="font-semibold">Add to Cart</span>
-          </button>
-          <button
-            onClick={handleBuyNow}
-            disabled={product.stock === 0}
-            className="btn-secondary flex-1 disabled:opacity-50 disabled:cursor-not-allowed py-3 sm:py-3.5 text-sm sm:text-base font-semibold touch-manipulation active:scale-95 transition-transform"
-          >
-            Buy Now
-          </button>
-        </div>
-      </div>
+      
     </div>
   );
 };
