@@ -1,63 +1,15 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { useData } from '@/contexts/datacontext'; // Import the context
 import ProductCard from '@/components/ProductCard';
 import { ChevronLeft, ChevronRight, Truck, Shield, RefreshCw, Sparkles } from 'lucide-react';
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  discountPrice?: number;
-  images: string[];
-  stock: number;
-  status: string;
-}
-
-interface Category {
-  id: string;
-  name: string;
-  imageUrl: string;
-}
-
 const HomePage = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
+  // Use the global data context instead of fetching
+  const { products, categories, loading, error } = useData();
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch categories
-        const categoriesSnapshot = await getDocs(collection(db, 'categories'));
-        const categoriesData = categoriesSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as Category[];
-        setCategories(categoriesData);
-
-        // Fetch active products
-        const productsQuery = query(collection(db, 'products'), where('status', '==', 'Active'));
-        const productsSnapshot = await getDocs(productsQuery);
-        const productsData = productsSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as Product[];
-        setProducts(productsData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   useEffect(() => {
     if (categories.length === 0) return;
-    
     const interval = setInterval(() => {
       setCurrentSlide(prev => (prev + 1) % categories.length);
     }, 4000);
@@ -97,24 +49,35 @@ const HomePage = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <button onClick={() => window.location.reload()} className="btn-primary">
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="pb-16 overflow-x-hidden">
-    
-
-<section className="relative h-[180px] md:h-[40vh] bg-muted overflow-hidden">        {categories.length > 0 && (
+      <section className="relative h-[180px] md:h-[40vh] bg-muted overflow-hidden">
+        {categories.length > 0 && (
           <>
             <div
               className="flex h-full transition-transform duration-500"
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}
             >
               {categories.map((category) => (
-                <div key={category.id} className="min-w-full  relative">
+                <div key={category.id} className="min-w-full relative">
                   <img
                     src={category.imageUrl}
                     alt={category.name}
                     className="w-full object-fill object-center"
                   />
-                  
                 </div>
               ))}
             </div>
@@ -122,37 +85,34 @@ const HomePage = () => {
             <button
               aria-label="Previous Slide"
               onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2   text-white p-2 hover:bg-white/30 transition-colors"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-white p-2 hover:bg-white/30 transition-colors"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
             <button
               aria-label="Next Slide"
               onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2   text-white p-2 hover:bg-white/30 transition-colors"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white p-2 hover:bg-white/30 transition-colors"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
-
-            
           </>
         )}
       </section>
 
-      {/* USPs */}
-     <section className="container mx-auto px-4 py-4 md:py-8">
-  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
-    {usps.map(({ icon: Icon, title, desc }) => (
-      <div key={title} className="bg-secondary p-2 md:p-4 text-center">
-        <Icon className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-1 md:mb-2" />
-        <h3 className="font-semibold text-xs md:text-sm">{title}</h3>
-        <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5 md:mt-1">{desc}</p>
-      </div>
-    ))}
-  </div>
-</section>
+      <section className="container mx-auto px-2 py-2 md:py-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
+          {usps.map(({ icon: Icon, title, desc }) => (
+            <div key={title} className="bg-secondary p-2 md:p-4 text-center">
+              <Icon className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-1 md:mb-2" />
+              <h3 className="font-semibold text-xs md:text-sm">{title}</h3>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5 md:mt-1">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-      <section className="container mx-auto px-2 py-2">
+      <section className="container mx-auto px-2 py-1">
         <h2 className="text-3xl font-bold mb-6">Featured Products</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
           {products.map(product => (
@@ -169,7 +129,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Customer Reviews */}
       <section className="bg-secondary py-8 mt-8">
         <div className="container mx-auto px-2">
           <h2 className="text-3xl font-bold mb-8 text-center">What Our Customers Say</h2>

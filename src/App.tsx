@@ -15,6 +15,7 @@ import CustomizePage from "./pages/CustomizePage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import NotFound from "./pages/NotFound";
+import { DataProvider } from "./contexts/datacontext";
 
 const queryClient = new QueryClient();
 
@@ -31,10 +32,13 @@ const ScrollToTop = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <CartProvider>
+                    <DataProvider>
+
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
+
           <ScrollToTop />
           <div className="min-h-screen flex flex-col">
             <Header />
@@ -55,6 +59,8 @@ const App = () => (
           </div>
         </BrowserRouter>
       </TooltipProvider>
+            </DataProvider>
+
     </CartProvider>
   </QueryClientProvider>
 );

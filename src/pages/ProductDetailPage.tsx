@@ -1,79 +1,45 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { doc, getDoc, collection, query, where, getDocs, limit } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { useData } from '@/contexts/datacontext'; // Import the context
 import { useCart } from '@/contexts/CartContext';
 import { toast } from 'sonner';
-import { ArrowLeft, Minus, Plus, ShoppingCart, Heart } from 'lucide-react';
+import { ArrowLeft, Minus, Plus, ShoppingCart } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
-
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  discountPrice?: number;
-  images: string[];
-  colors: string[];
-  sizes: string[];
-  stock: number;
-  sku: string;
-  tags?: string[];
-  categoryId: string;
-  subcategoryId?: string;
-}
 
 const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToCart } = useCart();
   
-  const [product, setProduct] = useState<Product | null>(null);
-  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  // Use the global data context - NO MORE API CALLS!
+  const { getProductById, getProductsBySubcategory, loading } = useData();
+  
+  const [product, setProduct] = useState(getProductById(id || ''));
+  const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(1);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      if (!id) return;
+    if (!id) return;
 
-      try {
-        const docRef = doc(db, 'products', id);
-        const docSnap = await getDoc(docRef);
+    const foundProduct = getProductById(id);
+    setProduct(foundProduct);
 
-        if (docSnap.exists()) {
-          const productData = { id: docSnap.id, ...docSnap.data() } as Product;
-          setProduct(productData);
-          setSelectedColor(productData.colors[0] || '');
-          setSelectedSize(productData.sizes[0] || '');
+    if (foundProduct) {
+      setSelectedColor(foundProduct.colors[0] || '');
+      setSelectedSize(foundProduct.sizes[0] || '');
 
-          // Fetch related products
-          if (productData.subcategoryId) {
-            const relatedQuery = query(
-              collection(db, 'products'),
-              where('subcategoryId', '==', productData.subcategoryId),
-              where('status', '==', 'Active'),
-              limit(5)
-            );
-            const relatedSnap = await getDocs(relatedQuery);
-            const related = relatedSnap.docs
-              .map(doc => ({ id: doc.id, ...doc.data() } as Product))
-              .filter(p => p.id !== id);
-            setRelatedProducts(related);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching product:', error);
-      } finally {
-        setLoading(false);
+      // Get related products from the same subcategory
+      if (foundProduct.subcategoryId) {
+        const related = getProductsBySubcategory(foundProduct.subcategoryId)
+          .filter(p => p.id !== id)
+          .slice(0, 5);
+        setRelatedProducts(related);
       }
-    };
-
-    fetchProduct();
-  }, [id]);
+    }
+  }, [id, getProductById, getProductsBySubcategory]);
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -128,7 +94,6 @@ const ProductDetailPage = () => {
 
   return (
     <div className="min-h-screen pb-24 md:pb-20">
-      {/* Back Button - Sticky on mobile */}
       <div className="sticky top-0 z-10 bg-background border-b border-border">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <button 
@@ -143,7 +108,6 @@ const ProductDetailPage = () => {
 
       <div className="container mx-auto px-3 sm:px-4 pb-6 sm:pb-8">
         <div className="grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
-          {/* Images */}
           <div className="pt-2 sm:pt-4">
             <div className="relative bg-muted mb-3 sm:mb-4 aspect-square rounded-lg overflow-hidden">
               <img
@@ -155,6 +119,7 @@ const ProductDetailPage = () => {
             <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
               {product.images.map((img, index) => (
                 <button
+                title='d'
                   key={index}
                   onClick={() => setSelectedImage(index)}
                   className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 border-2 rounded-md overflow-hidden touch-manipulation transition-all ${
@@ -167,7 +132,6 @@ const ProductDetailPage = () => {
             </div>
           </div>
 
-          {/* Details */}
           <div className="pt-2 sm:pt-4">
             <div className="mb-4 sm:mb-6">
               <p className="text-xs sm:text-sm text-muted-foreground mb-1 sm:mb-2">SKU: {product.sku}</p>
@@ -187,7 +151,6 @@ const ProductDetailPage = () => {
 
             <p className="text-sm sm:text-base leading-relaxed mb-4 sm:mb-6 text-muted-foreground">{product.description}</p>
 
-            {/* Stock Status */}
             {product.stock > 0 ? (
               product.stock < 10 && (
                 <div className="badge-stock-low mb-4 inline-block text-xs sm:text-sm px-3 py-1.5">
@@ -200,7 +163,6 @@ const ProductDetailPage = () => {
               </div>
             )}
 
-            {/* Colors */}
             <div className="mb-5 sm:mb-6">
               <h3 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base">Select Color</h3>
               <div className="flex gap-2 flex-wrap">
@@ -219,7 +181,6 @@ const ProductDetailPage = () => {
               </div>
             </div>
 
-            {/* Sizes */}
             <div className="mb-5 sm:mb-6">
               <h3 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base">Select Size</h3>
               <div className="flex gap-2 flex-wrap">
@@ -239,7 +200,6 @@ const ProductDetailPage = () => {
               </div>
             </div>
 
-            {/* Quantity */}
             <div className="mb-5 sm:mb-6">
               <h3 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base">Quantity</h3>
               <div className="flex items-center gap-3 sm:gap-4">
@@ -263,7 +223,6 @@ const ProductDetailPage = () => {
               </div>
             </div>
 
-            {/* Action Buttons - Desktop */}
             <div className="hidden md:flex flex-col gap-3">
               <button
                 onClick={handleAddToCart}
@@ -282,7 +241,6 @@ const ProductDetailPage = () => {
               </button>
             </div>
 
-            {/* Tags */}
             {product.tags && product.tags.length > 0 && (
               <div className="mt-5 sm:mt-6">
                 <div className="flex gap-2 flex-wrap">
@@ -297,7 +255,6 @@ const ProductDetailPage = () => {
           </div>
         </div>
 
-        {/* Related Products */}
         {relatedProducts.length > 0 && (
           <section className="mt-10 sm:mt-12 md:mt-16">
             <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 px-1">You May Also Like</h2>
@@ -318,10 +275,7 @@ const ProductDetailPage = () => {
         )}
       </div>
 
-      {/* Fixed Bottom Action Bar - Mobile Only */}
-     {/* <div 
-  className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border p-3 sm:p-4 z-20 shadow-lg"
-> */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border p-3 sm:p-4 z-20 shadow-lg">
         <div className="flex gap-2 sm:gap-3">
           <button
             onClick={handleAddToCart}
@@ -340,7 +294,7 @@ const ProductDetailPage = () => {
           </button>
         </div>
       </div>
-    // </div>
+    </div>
   );
 };
 
