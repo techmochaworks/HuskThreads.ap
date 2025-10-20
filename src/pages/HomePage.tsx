@@ -101,8 +101,7 @@ const HomePage = () => {
     <div className="pb-16 overflow-x-hidden">
     
 
-      <section className="relative  md:h-[60vh] bg-muted overflow-hidden">
-        {categories.length > 0 && (
+<section className="relative h-[180px] md:h-[40vh] bg-muted overflow-hidden">        {categories.length > 0 && (
           <>
             <div
               className="flex h-full transition-transform duration-500"
@@ -141,22 +140,21 @@ const HomePage = () => {
       </section>
 
       {/* USPs */}
-      <section className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {usps.map(({ icon: Icon, title, desc }) => (
-            <div key={title} className="bg-secondary p-4 text-center">
-              <Icon className="w-8 h-8 mx-auto mb-2" />
-              <h3 className="font-semibold text-sm">{title}</h3>
-              <p className="text-xs text-muted-foreground mt-1">{desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+     <section className="container mx-auto px-4 py-4 md:py-8">
+  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
+    {usps.map(({ icon: Icon, title, desc }) => (
+      <div key={title} className="bg-secondary p-2 md:p-4 text-center">
+        <Icon className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-1 md:mb-2" />
+        <h3 className="font-semibold text-xs md:text-sm">{title}</h3>
+        <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5 md:mt-1">{desc}</p>
+      </div>
+    ))}
+  </div>
+</section>
 
-      {/* Featured Products */}
-      <section className="container mx-auto px-4 py-8">
+      <section className="container mx-auto px-2 py-2">
         <h2 className="text-3xl font-bold mb-6">Featured Products</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
           {products.map(product => (
             <ProductCard
               key={product.id}
@@ -172,8 +170,8 @@ const HomePage = () => {
       </section>
 
       {/* Customer Reviews */}
-      <section className="bg-secondary py-12">
-        <div className="container mx-auto px-4">
+      <section className="bg-secondary py-8 mt-8">
+        <div className="container mx-auto px-2">
           <h2 className="text-3xl font-bold mb-8 text-center">What Our Customers Say</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {reviews.map((review, index) => (
