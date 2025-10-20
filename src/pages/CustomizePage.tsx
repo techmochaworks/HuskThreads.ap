@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { uploadToCloudinary } from '@/lib/cloudinary';
 import { toast } from 'sonner';
-import { Upload, Sparkles } from 'lucide-react';
+import { Upload, Sparkles, Loader2 } from 'lucide-react';
 
 const CustomizePage = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +18,7 @@ const CustomizePage = () => {
   const [designFile, setDesignFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>('');
   const [submitting, setSubmitting] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const productTypes = ['T-shirt', 'Hoodie', 'Sweatshirt', 'Polo', 'Tank Top'];
   const colors = ['Black', 'White', 'Navy', 'Gray', 'Red', 'Blue', 'Green'];
@@ -25,6 +27,20 @@ const CustomizePage = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file size
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if (file.size > maxSize) {
+        toast.error('File size must be less than 10MB');
+        return;
+      }
+
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp', 'image/gif', 'image/svg+xml'];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error('Invalid file type. Only JPEG, PNG, WebP, GIF, and SVG are allowed');
+        return;
+      }
+
       setDesignFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -62,11 +78,21 @@ const CustomizePage = () => {
     }
 
     setSubmitting(true);
+    setUploading(true);
 
     try {
+      // Upload image to Cloudinary
+      toast.info('Uploading your design...');
+      const designUrl = await uploadToCloudinary(designFile);
+      
+      setUploading(false);
+      toast.success('Design uploaded successfully!');
+
+      // Save order to Firestore with Cloudinary URL
       await addDoc(collection(db, 'customOrders'), {
         ...formData,
         designFileName: designFile.name,
+        designUrl: designUrl, 
         status: 'Pending',
         createdAt: serverTimestamp(),
       });
@@ -89,9 +115,14 @@ const CustomizePage = () => {
       setPreview('');
     } catch (error) {
       console.error('Error submitting order:', error);
-      toast.error('Failed to submit order. Please try again.');
+      if (error instanceof Error) {
+        toast.error(error.message || 'Failed to submit order. Please try again.');
+      } else {
+        toast.error('Failed to submit order. Please try again.');
+      }
     } finally {
       setSubmitting(false);
+      setUploading(false);
     }
   };
 
@@ -147,13 +178,14 @@ const CustomizePage = () => {
                 <label className="block">
                   <input
                     type="file"
-                    accept="image/png,image/jpeg,image/svg+xml"
+                    accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,image/svg+xml"
                     onChange={handleFileChange}
                     className="hidden"
+                    disabled={uploading}
                   />
-                  <div className="border-2 border-dashed border-border p-6 sm:p-8 text-center cursor-pointer hover:border-foreground transition-colors">
+                  <div className={`border-2 border-dashed border-border p-6 sm:p-8 text-center cursor-pointer hover:border-foreground transition-colors ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     {preview ? (
-                      <img src={preview} alt="Preview" className="max-h-40 sm:max-h-48 mx-auto mb-3 sm:mb-4" />
+                      <img src={preview} alt="Preview" className="max-h-40 sm:max-h-48 mx-auto mb-3 sm:mb-4 object-contain" />
                     ) : (
                       <Upload className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-muted-foreground" />
                     )}
@@ -161,7 +193,7 @@ const CustomizePage = () => {
                       {designFile ? designFile.name : 'Click to upload or drag and drop'}
                     </p>
                     <p className="text-xs sm:text-sm text-muted-foreground mt-2">
-                      PNG, JPG or SVG (MAX. 10MB)
+                      PNG, JPG, WebP, GIF or SVG (MAX. 10MB)
                     </p>
                   </div>
                 </label>
@@ -250,9 +282,16 @@ const CustomizePage = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="btn-primary w-full disabled:opacity-50 text-sm sm:text-base py-2.5 sm:py-3"
+                className="btn-primary w-full disabled:opacity-50 text-sm sm:text-base py-2.5 sm:py-3 flex items-center justify-center gap-2"
               >
-                {submitting ? 'Submitting...' : 'Request Quote'}
+                {submitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    {uploading ? 'Uploading Design...' : 'Submitting...'}
+                  </>
+                ) : (
+                  'Request Quote'
+                )}
               </button>
             </form>
           </div>
